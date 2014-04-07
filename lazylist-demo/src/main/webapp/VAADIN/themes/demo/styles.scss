@@ -1,0 +1,45 @@
+@import "../reindeer/reindeer.scss";
+
+$gray: #d1d1cf;
+$green: #40b527;
+$darkgreen: darken($green, 30%);
+
+// Prefix all selectors in your theme with .demo
+.demo {
+
+	// Include reindeer theme styles in your theme
+	@include reindeer;
+
+	.v-widget {
+		font-size: 20px;
+	}
+
+	.person {
+		position: relative;
+		height: 60px;
+		border: 1px solid #DFDFE0;
+		background: -webkit-linear-gradient(#F5F5FD, #EAEFFF); 
+		background: -o-linear-gradient(#F5F5FD, #EAEFFF); 
+		background: -moz-linear-gradient(#F5F5FD, #EAEFFF);
+		background: linear-gradient(#F5F5FD, #EAEFFF);
+	}
+	
+	.person .name {
+		position: absolute;
+		top: 10px;
+		left: 15px;
+	}
+	
+	.person .phone {
+		position: absolute;
+		top: 20px;
+		right: 15px;
+	}
+	.person .city {
+		position: absolute;
+		bottom: 10px;
+		left: 15px;
+		font-size: 15px;
+		color: #8F8E8E;
+	}
+}

@@ -1,0 +1,9 @@
+*.jar
+*.war
+*.class
+*.settings*
+**/VAADIN/widgetsets
+**/target
+*rebel.xml
+*.classpath
+*.DS_Store
