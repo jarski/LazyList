@@ -87,7 +87,7 @@ LazyList is written by Jarno Rantala
 
 Here is a simple example on how to try out the add-on component:
 
-<code>
+<pre><code>
 LazyItemFetcher itemFetcher = new LazyItemFetcher() {
 	@Override
 	public List<Component> getMoreItems() {
@@ -97,7 +97,7 @@ LazyItemFetcher itemFetcher = new LazyItemFetcher() {
 final LazyList lazylist = new LazyList(itemFetcher);
 lazylist.setSizeFull();
 setContent(lazylist);
-</code>
+</code></pre>
 
 For a more comprehensive example, see lazylist-demo/src/main/java/org/vaadin/demo/DemoUI.java
 
