@@ -35,6 +35,7 @@ public class LazyList extends com.vaadin.ui.AbstractComponent implements HasComp
 		this.itemFetcher = itemFetcher;
 		registerRpc(rpc);
 		askMoreItems();
+		setSizeFull();
 	}
 
 	private void askMoreItems() {

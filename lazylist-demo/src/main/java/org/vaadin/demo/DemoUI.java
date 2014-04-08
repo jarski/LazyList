@@ -25,15 +25,21 @@ import com.vaadin.server.SessionInitEvent;
 import com.vaadin.server.SessionInitListener;
 import com.vaadin.server.VaadinRequest;
 import com.vaadin.server.VaadinServlet;
+import com.vaadin.ui.Button;
+import com.vaadin.ui.Button.ClickEvent;
+import com.vaadin.ui.Button.ClickListener;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.CssLayout;
+import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
+import com.vaadin.ui.Panel;
 import com.vaadin.ui.UI;
+import com.vaadin.ui.VerticalLayout;
 
 @Theme("demo")
 @Title("LazyList Add-on Demo")
 @SuppressWarnings("serial")
-public class DemoUI extends UI {
+public class DemoUI extends UI implements ClickListener {
 
 	@WebServlet(value = "/*", asyncSupported = true)
 	@VaadinServletConfiguration(productionMode = false, ui = DemoUI.class, widgetset = "org.vaadin.demo.DemoWidgetSet")
@@ -70,25 +76,120 @@ public class DemoUI extends UI {
 	}
 
 	private Service service = new Service();
+	private VerticalLayout layout;
+	private Button infinite;
+	private Button finite;
+	private Button couple;
+	private LazyList infiniteList;
+	private LazyList finiteList;
+	private LazyList shortList;
 
 	@Override
 	protected void init(VaadinRequest request) {
+		infiniteList = createInfiniteList();
+		finiteList = createFiniteList();
+		shortList = createShortList();
+
+		HorizontalLayout buttons = new HorizontalLayout();
+		infinite = new Button("Infinite", this);
+		finite = new Button("Finite", this);
+		couple = new Button("Short", this);
+		buttons.addComponent(infinite);
+		buttons.addComponent(finite);
+		buttons.addComponent(couple);
+		Panel navigationArea = new Panel();
+		navigationArea.setContent(buttons);
+
+		layout = new VerticalLayout();
+		layout.addComponent(navigationArea);
+		layout.addComponent(infiniteList);
+		layout.setSizeFull();
+		layout.setExpandRatio(infiniteList, 1);
+
+		setContent(layout);
+	}
+
+	@Override
+	public void buttonClick(ClickEvent event) {
+		Button button = event.getButton();
+		if (infinite.equals(button)) {
+			replaceCurrentListWith(infiniteList);
+		}
+		if (finite.equals(button)) {
+			replaceCurrentListWith(finiteList);
+		}
+		if (couple.equals(button)) {
+			replaceCurrentListWith(shortList);
+		}
+	}
+
+	private void replaceCurrentListWith(LazyList newList) {
+		Component currentList = layout.getComponent(1);
+		layout.replaceComponent(currentList, newList);
+		layout.setExpandRatio(newList, 1);
+	}
+
+	private LazyList createInfiniteList() {
 		LazyItemFetcher itemFetcher = new LazyItemFetcher() {
 			@Override
 			public List<Component> getMoreItems() {
-				List<Component> personViews = new LinkedList<Component>();
-				for (Person person : service.getMorePersons()) {
-					personViews.add(createPersonView(person));
-				}
-				return personViews;
+				return fetchMorePersons();
+			}
+
+		};
+		final LazyList lazylist = new LazyList(itemFetcher);
+		return lazylist;
+	}
+
+	private LazyList createFiniteList() {
+		LazyItemFetcher itemFetcher = new LazyItemFetcher() {
+			boolean alreadyFetched = false;
+
+			@Override
+			public List<Component> getMoreItems() {
+				return fetchFiniteNumberOfPersons();
 			}
 		};
 		final LazyList lazylist = new LazyList(itemFetcher);
-		lazylist.setSizeFull();
-		setContent(lazylist);
+		return lazylist;
 	}
 
-	protected Component createPersonView(Person person) {
+	private LazyList createShortList() {
+		LazyItemFetcher itemFetcher = new LazyItemFetcher() {
+			@Override
+			public List<Component> getMoreItems() {
+				return fetchCoupleOfPersons();
+			}
+		};
+		final LazyList lazylist = new LazyList(itemFetcher);
+		return lazylist;
+	}
+
+	private List<Component> fetchMorePersons() {
+		List<Component> personViews = new LinkedList<Component>();
+		for (Person person : service.getMorePersons()) {
+			personViews.add(createPersonView(person));
+		}
+		return personViews;
+	}
+
+	private List<Component> fetchFiniteNumberOfPersons() {
+		List<Component> personViews = new LinkedList<Component>();
+		for (Person person : service.getFiniteNumberOfPersons()) {
+			personViews.add(createPersonView(person));
+		}
+		return personViews;
+	}
+
+	private List<Component> fetchCoupleOfPersons() {
+		List<Component> personViews = new LinkedList<Component>();
+		for (Person person : service.getCoupleOfPersons()) {
+			personViews.add(createPersonView(person));
+		}
+		return personViews;
+	}
+
+	private Component createPersonView(Person person) {
 		CssLayout cssLayout = new CssLayout();
 		cssLayout.addStyleName("person");
 
@@ -107,4 +208,5 @@ public class DemoUI extends UI {
 		cssLayout.addComponent(phone);
 		return cssLayout;
 	}
+
 }

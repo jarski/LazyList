@@ -10,10 +10,6 @@ $darkgreen: darken($green, 30%);
 	// Include reindeer theme styles in your theme
 	@include reindeer;
 
-	.v-widget {
-		font-size: 20px;
-	}
-
 	.person {
 		position: relative;
 		height: 60px;
@@ -25,12 +21,14 @@ $darkgreen: darken($green, 30%);
 	}
 	
 	.person .name {
+		font-size: 20px;
 		position: absolute;
 		top: 10px;
 		left: 15px;
 	}
 	
 	.person .phone {
+		font-size: 20px;
 		position: absolute;
 		top: 20px;
 		right: 15px;
