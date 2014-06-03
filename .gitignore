@@ -7,3 +7,4 @@
 *rebel.xml
 *.classpath
 *.DS_Store
+**/VAADIN/gwt-unitCache/

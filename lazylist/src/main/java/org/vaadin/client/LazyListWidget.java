@@ -76,6 +76,23 @@ public class LazyListWidget extends FlowPanel implements ScrollHandler {
 		}
 	}
 
+	public void updateChildComponents(List<ComponentConnector> childComponents) {
+		log("UPDATE ITEMS");
+		remove(moreItemsSpinner);
+		boolean newItemsWasAdded = false;
+		for (ComponentConnector child : childComponents) {
+			if (!contains(child.getWidget())) {
+				add(child.getWidget());
+				newItemsWasAdded = true;
+			}
+		}
+		if (newItemsWasAdded) {
+			log("SPINNER ADDED");
+			add(moreItemsSpinner);
+		}
+		fetchingMoreItems = false;
+	}
+
 	private boolean moreItemsSpinnerIsVisible() {
 		int spinnerHeight = Util.getRequiredHeight(moreItemsSpinner);
 		return spinnerHeight >= scrollableHeightLeft();
@@ -86,17 +103,6 @@ public class LazyListWidget extends FlowPanel implements ScrollHandler {
 		int scrollHeight = getElement().getScrollHeight();
 		int clientHeight = getElement().getClientHeight();
 		return scrollHeight - clientHeight - newScrollTop;
-	}
-
-	public void updateChildComponents(List<ComponentConnector> childComponents) {
-		remove(moreItemsSpinner);
-		for (ComponentConnector child : childComponents) {
-			if (!contains(child.getWidget())) {
-				add(child.getWidget());
-			}
-		}
-		add(moreItemsSpinner);
-		fetchingMoreItems = false;
 	}
 
 	private void fetchMoreItems() {
