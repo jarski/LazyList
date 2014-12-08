@@ -4,6 +4,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.vaadin.client.LazyListClientRpc;
 import org.vaadin.client.LazyListServerRpc;
 import org.vaadin.client.LazyListState;
 
@@ -23,17 +24,17 @@ public class LazyList extends com.vaadin.ui.AbstractComponent implements HasComp
 	private List<Component> childComponents = new LinkedList<Component>();
 	private EventRouter eventRouter = new EventRouter();
 
-	private LazyListServerRpc rpc = new LazyListServerRpc() {
-		@Override
-		public void moreItems() {
-			askMoreItems();
-		}
-
-	};
+	LazyListClientRpc clientRpc = getRpcProxy(LazyListClientRpc.class);
 
 	public LazyList(LazyItemFetcher itemFetcher) {
 		this.itemFetcher = itemFetcher;
-		registerRpc(rpc);
+		registerRpc(new LazyListServerRpc() {
+			@Override
+			public void moreItems() {
+				askMoreItems();
+				clientRpc.moreItemsFetched();
+			}
+		});
 		askMoreItems();
 		setSizeFull();
 	}

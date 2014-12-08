@@ -8,3 +8,6 @@
 *.classpath
 *.DS_Store
 **/VAADIN/gwt-unitCache/
+.idea
+*.iml
+*.launch

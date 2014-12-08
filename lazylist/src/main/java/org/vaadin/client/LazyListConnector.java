@@ -7,6 +7,7 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.Widget;
 import com.vaadin.client.ComponentConnector;
 import com.vaadin.client.ConnectorHierarchyChangeEvent;
+import com.vaadin.client.DirectionalManagedLayout;
 import com.vaadin.client.communication.RpcProxy;
 import com.vaadin.client.communication.StateChangeEvent;
 import com.vaadin.client.ui.AbstractHasComponentsConnector;
@@ -14,12 +15,17 @@ import com.vaadin.client.ui.layout.MayScrollChildren;
 import com.vaadin.shared.ui.Connect;
 
 @Connect(LazyList.class)
-public class LazyListConnector extends AbstractHasComponentsConnector implements MayScrollChildren, MoreItemsHandler {
+public class LazyListConnector extends AbstractHasComponentsConnector implements MayScrollChildren, MoreItemsHandler,
+		DirectionalManagedLayout {
 
 	LazyListServerRpc rpc = RpcProxy.create(LazyListServerRpc.class, this);
 
 	public LazyListConnector() {
 		registerRpc(LazyListClientRpc.class, new LazyListClientRpc() {
+			@Override
+			public void moreItemsFetched() {
+				getWidget().moreItemsFetched();
+			}
 		});
 		getWidget().addMoreItemsHandler(this);
 	}
@@ -59,4 +65,15 @@ public class LazyListConnector extends AbstractHasComponentsConnector implements
 	public void moreItems() {
 		rpc.moreItems();
 	}
+
+	@Override
+	public void layoutVertically() {
+
+	}
+
+	@Override
+	public void layoutHorizontally() {
+
+	}
+
 }

@@ -26,7 +26,7 @@ public class LazyListWidget extends FlowPanel implements ScrollHandler {
 
 	private String textForFetchMoreItems = "Loading..";
 
-	static void log(String message) {
+	private void log(String message) {
 		logger.log(Level.INFO, message);
 	}
 
@@ -37,11 +37,11 @@ public class LazyListWidget extends FlowPanel implements ScrollHandler {
 	private List<MoreItemsHandler> moreItemsHandlers = new ArrayList<MoreItemsHandler>();
 	private Widget moreItemsSpinner = createMoreSpinner();
 	private boolean fetchingMoreItems = false;
+	private int moreItemsSpinnerHeight = 0;
 
 	public LazyListWidget() {
 		setStyleName(Theme.LAZYLIST);
 		addDomHandler(this, ScrollEvent.getType());
-		super.add(moreItemsSpinner);
 	}
 
 	private Widget createMoreSpinner() {
@@ -60,6 +60,11 @@ public class LazyListWidget extends FlowPanel implements ScrollHandler {
 		return spinner;
 	}
 
+	private void measureSizes() {
+		moreItemsSpinnerHeight = Util.getRequiredHeight(moreItemsSpinner);
+		log("lazylist - more items spinner height measured: " + moreItemsSpinnerHeight);
+	}
+
 	public void addMoreItemsHandler(MoreItemsHandler handler) {
 		moreItemsHandlers.add(handler);
 	}
@@ -70,32 +75,45 @@ public class LazyListWidget extends FlowPanel implements ScrollHandler {
 
 	@Override
 	public void onScroll(ScrollEvent event) {
+		shouldMoreItemsSpinnerBeAddedToDOM();
 		if (!fetchingMoreItems && moreItemsSpinnerIsVisible()) {
 			log("LazyList: fetch more items");
 			fetchMoreItems();
 		}
 	}
 
+	public void moreItemsFetched() {
+		log("lazylist - more items fetched");
+		if (fetchingMoreItems) {
+			log("lazylist - remove spinner");
+			remove(moreItemsSpinner);
+			fetchingMoreItems = false;
+		}
+	}
+
+	// This is never called if there was no new childs
 	public void updateChildComponents(List<ComponentConnector> childComponents) {
-		log("UPDATE ITEMS");
-		remove(moreItemsSpinner);
-		boolean newItemsWasAdded = false;
+		log("lazylist - update items");
+		super.remove(moreItemsSpinner);
 		for (ComponentConnector child : childComponents) {
 			if (!contains(child.getWidget())) {
 				add(child.getWidget());
-				newItemsWasAdded = true;
 			}
-		}
-		if (newItemsWasAdded) {
-			log("SPINNER ADDED");
-			add(moreItemsSpinner);
 		}
 		fetchingMoreItems = false;
 	}
 
+	private void shouldMoreItemsSpinnerBeAddedToDOM() {
+		if (moreItemsSpinnerHeight == 0) {
+			measureSizes();
+		}
+		if (scrollableHeightLeft() <= 2 * moreItemsSpinnerHeight) {
+			add(moreItemsSpinner);
+		}
+	}
+
 	private boolean moreItemsSpinnerIsVisible() {
-		int spinnerHeight = Util.getRequiredHeight(moreItemsSpinner);
-		return spinnerHeight >= scrollableHeightLeft();
+		return moreItemsSpinnerHeight >= scrollableHeightLeft();
 	}
 
 	private int scrollableHeightLeft() {
@@ -106,10 +124,10 @@ public class LazyListWidget extends FlowPanel implements ScrollHandler {
 	}
 
 	private void fetchMoreItems() {
+		log("lazylist - fetch more items");
 		fetchingMoreItems = true;
 		for (MoreItemsHandler handler : moreItemsHandlers) {
 			handler.moreItems();
 		}
 	}
-
 }

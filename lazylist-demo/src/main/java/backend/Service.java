@@ -24,16 +24,20 @@ public class Service {
 	private boolean coupleOfPersonsFetched;
 
 	public List<Person> getMorePersons() {
-		try {
-			Thread.sleep(500);
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
+		simulateHeavyProcess();
 		LinkedList<Person> persons = new LinkedList<Person>();
 		for (int i = 0; i < 50; ++i) {
 			persons.add(createRandomPerson());
 		}
 		return persons;
+	}
+
+	private void simulateHeavyProcess() {
+		try {
+			Thread.sleep(500);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
 	}
 
 	public List<Person> getFiniteNumberOfPersons() {

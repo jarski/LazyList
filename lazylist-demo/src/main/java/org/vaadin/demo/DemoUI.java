@@ -80,9 +80,9 @@ public class DemoUI extends UI implements ClickListener {
 	private Button infinite;
 	private Button finite;
 	private Button couple;
-	private LazyList infiniteList;
 	private LazyList finiteList;
 	private LazyList shortList;
+	private LazyList infiniteList;
 
 	@Override
 	protected void init(VaadinRequest request) {
@@ -143,8 +143,6 @@ public class DemoUI extends UI implements ClickListener {
 
 	private LazyList createFiniteList() {
 		LazyItemFetcher itemFetcher = new LazyItemFetcher() {
-			boolean alreadyFetched = false;
-
 			@Override
 			public List<Component> getMoreItems() {
 				return fetchFiniteNumberOfPersons();
