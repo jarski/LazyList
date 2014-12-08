@@ -41,6 +41,7 @@ public class Service {
 	}
 
 	public List<Person> getFiniteNumberOfPersons() {
+		simulateHeavyProcess();
 		if (finiteNumberOfPersonsFetched) {
 			return Collections.emptyList();
 		}

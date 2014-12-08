@@ -32,7 +32,6 @@ public class LazyList extends com.vaadin.ui.AbstractComponent implements HasComp
 			@Override
 			public void moreItems() {
 				askMoreItems();
-				clientRpc.moreItemsFetched();
 			}
 		});
 		askMoreItems();
@@ -41,6 +40,10 @@ public class LazyList extends com.vaadin.ui.AbstractComponent implements HasComp
 
 	private void askMoreItems() {
 		List<Component> newComponents = itemFetcher.getMoreItems();
+		if (newComponents.isEmpty()) {
+			clientRpc.moreItemsFetchedButNothingFound();
+			return;
+		}
 		for (Component component : newComponents) {
 			childComponents.add(component);
 			eventRouter.fireEvent(new ComponentAttachEvent(this, component));

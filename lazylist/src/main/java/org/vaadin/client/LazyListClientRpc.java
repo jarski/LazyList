@@ -4,6 +4,6 @@ import com.vaadin.shared.communication.ClientRpc;
 
 public interface LazyListClientRpc extends ClientRpc {
 
-	public void moreItemsFetched();
+	public void moreItemsFetchedButNothingFound();
 
 }
